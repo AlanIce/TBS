@@ -1,0 +1,6 @@
+build/
+*.class
+
+*.properties
+hibernate.cfg.xml
+proxool.xml

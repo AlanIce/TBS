@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	
+	<constant name="struts.enable.DynamicMethodInvocation" value="false"/>
+		
+	<package name="default" namespace="/" extends="struts-default">
+		<interceptors>
+			<interceptor name="CheckSignin" class="TBS.Interceptor.CheckSigninInterceptor" />
+		</interceptors>
+		
+		<default-action-ref name="SignAction_*" />
+		<action name="welcome">
+			<result>/welcome.jsp</result>
+		</action>
+		
+		<action name="SignAction_*" class="SignAction" method="{1}">
+			<result name="success">/homepage.jsp</result>
+			<result name="input">/welcome.jsp</result>
+			<interceptor-ref name="defaultStack"/>
+			<interceptor-ref name="CheckSignin"/>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 15, 2016 10:12:44 PM by Hibernate Tools 5.1.0.Beta1 -->
+<hibernate-mapping>
+    <class name="TBS.Model.User" table="user" catalog="tbs" optimistic-lock="version">
+        <id name="username" type="string">
+            <column name="Username" length="20" />
+            <generator class="assigned" />
+        </id>
+        <property name="password" type="string">
+            <column name="Password" length="50" />
+        </property>
+        <property name="name" type="string">
+            <column name="Name" length="10" />
+        </property>
+        <property name="email" type="string">
+            <column name="Email" length="50" not-null="true" unique="true" />
+        </property>
+        <property name="admin" type="java.lang.Boolean">
+            <column name="Admin" />
+        </property>
+    </class>
+</hibernate-mapping>
