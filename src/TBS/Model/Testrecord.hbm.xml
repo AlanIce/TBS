@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Dec 1, 2016 11:52:12 PM by Hibernate Tools 5.1.0.Beta1 -->
+<hibernate-mapping>
+    <class name="TBS.Model.Testrecord" table="testrecord" catalog="tbs" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="ID" />
+            <generator class="identity" />
+        </id>
+        <property name="username" type="string">
+            <column name="Username" length="20" not-null="true" />
+        </property>
+        <property name="courseId" type="string">
+            <column name="CourseID" length="10" not-null="true" />
+        </property>
+        <property name="score" type="java.lang.Integer">
+            <column name="Score" />
+        </property>
+        <property name="testDate" type="timestamp">
+            <column name="TestDate" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

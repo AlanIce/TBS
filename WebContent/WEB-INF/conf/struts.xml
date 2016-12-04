@@ -8,19 +8,45 @@
 		
 	<package name="default" namespace="/" extends="struts-default">
 		<interceptors>
-			<interceptor name="CheckSignin" class="TBS.Interceptor.CheckSigninInterceptor" />
+			<interceptor name="CheckSignAction" class="TBS.Interceptor.CheckSignActionInterceptor" />
+			<interceptor name="CheckUser" class="TBS.Interceptor.CheckUserInterceptor" />
+			<interceptor-stack name="myStack"> 
+				<interceptor-ref name="CheckUser"/>
+				<interceptor-ref name="defaultStack"/> <!--必需引用这个，否则点下一个子ACTION会报错-->
+			</interceptor-stack> 
 		</interceptors>
 		
-		<default-action-ref name="SignAction_*" />
+		<default-interceptor-ref name="myStack" />
+		<default-action-ref name="homepage" />
+		
+		<global-results>
+			<result name="success">/homepage.jsp</result>
+			<result name="input">/welcome.jsp</result>
+		</global-results>
+		
 		<action name="welcome">
 			<result>/welcome.jsp</result>
 		</action>
-		
-		<action name="SignAction_*" class="SignAction" method="{1}">
-			<result name="success">/homepage.jsp</result>
-			<result name="input">/welcome.jsp</result>
-			<interceptor-ref name="defaultStack"/>
-			<interceptor-ref name="CheckSignin"/>
+		<action name="homepage">
+			<result>/homepage.jsp</result>
 		</action>
+		<action name="select">
+			<result>/select.jsp</result>
+		</action>
+		<action name="person">
+			<result>/person.jsp</result>
+		</action>
+		<action name="test">
+			<result>/test.jsp</result>
+		</action>
+		
+		<!-- 配置Action的地址 -->
+		<action name="SignAction_*" class="SignAction" method="{1}">
+			<interceptor-ref name="CheckSignAction" />
+			<interceptor-ref name="defaultStack" />
+		</action>
+		
+		<action name="SelectAction_*" class="SelectAction" method="{1}" />
+		<action name="TestAction_*" class="TestAction" method="{1}" />
 	</package>
 </struts>

@@ -10,10 +10,10 @@ public class SignDao extends HibernateDaoSupport {
 	
 	public User getUser(String username) {
 		String hql = "from User where Username = '" + username + "'";
-		List<User> userList = (List<User>) getHibernateTemplate().find(hql);
-		if (userList.size() == 0)
+		List<User> users = (List<User>) getHibernateTemplate().find(hql);
+		if (users.size() == 0)
 			return null;
-		return userList.get(0);
+		return users.get(0);
 	}
 	
 	public void saveUser(String username, String name, String email, String password) {

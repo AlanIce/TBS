@@ -1,0 +1,38 @@
+.x-container {
+	max-width: 1920px;
+	padding: 0 25px;
+}
+
+.uk-navbar {
+	background: #07d;
+	color: #000;
+	border-radius: 0;
+}
+
+.uk-navbar-nav>li>a:active {
+	background: #059;
+	color: #fff;
+}
+
+.uk-navbar-nav>li.uk-active>a, .uk-navbar-nav>li>a:hover {
+	background: #06a;
+	color: #fff;
+}
+
+.uk-navbar-brand, .uk-navbar-brand:hover, .uk-navbar-brand:focus,
+	.uk-open>a, .uk-navbar-nav>li>a, .uk-navbar-nav>li>a:focus {
+	height: 50px;
+	color: #fff !important;
+	text-shadow: none;
+}
+
+.uk-navbar-nav>li>a {
+	font-size: 16px;
+	line-height: 48px;
+}
+
+.uk-navbar-brand {
+	font-family: SimHei;
+	font: 20px;
+	line-height: 48px;
+}

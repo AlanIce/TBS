@@ -1,12 +1,14 @@
 package Test;
 
+import java.util.List;
+
+import javax.persistence.TypedQuery;
+
 import org.hibernate.*;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
 import org.junit.*;
 
-import TBS.Model.User;
+import TBS.Model.*;
 
 public class UnitTest {
 	
@@ -17,8 +19,7 @@ public class UnitTest {
 	
 	@Before
 	public void init() {
-		Configuration config = new Configuration().configure();
-		ServiceRegistry serviceRegistry =new StandardServiceRegistryBuilder().applySettings(config.getProperties()).build();
+		Configuration config = new Configuration().configure("Test/hibernate.cfg.xml");
 		sessionFactory = config.buildSessionFactory();
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
@@ -32,35 +33,25 @@ public class UnitTest {
 	}
 	
 	@Test
-	public void deleteUser() {
-		User user = new User();
-		user.setAdmin(false);
-		user.setUsername("2014301500000");
-		user.setPassword("123456");
-		user.setEmail("Test@Test.Test");
-		user.setName("Test");
-		session.delete(user);
+	public void createCourse() {
+		Course course = new Course();
+		course.setCourseId("004");
+		course.setCourseName("计算机系统结构");
+		course.setCourseImgSrc("/TBS/lib/image/courseCover/004.jpg");
+		course.setTeacher("葛辉");
+		session.update(course);
  	}
 	
 	@Test
-	public void testAdmin() {
-		User user = new User();
-		user.setAdmin(true);
-		user.setUsername("admin");
-		user.setPassword("c759eaf09e4638954f63ace0ce1b53b40f62ccb7");
-		user.setEmail("admin@email.com");
-		user.setName("系统管理员");
-		session.update(user);		
- 	}
-	
-	@Test
-	public void testUser() {
-		User user = new User();
-		user.setAdmin(false);
-		user.setUsername("2014301500384");
-		user.setPassword("fa39e016576829c8237a2d5a82d428b52d586b22");
-		user.setEmail("2198928117@qq.com");
-		user.setName("邹文俊");
-		session.update(user);		
- 	}
+	public void testQuestion() {
+		String hql = "from Question where CourseID='001' order by rand()";
+		TypedQuery<Question> query = session.createQuery(hql);
+		query.setMaxResults(5);
+		List<Question> questiones = query.getResultList();
+		for (Question question:questiones) {
+			System.out.println(question.getId());
+		}
+		
+		
+	}
 }

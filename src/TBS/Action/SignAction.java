@@ -2,18 +2,14 @@ package TBS.Action;
 
 import java.io.PrintWriter;
 
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.opensymphony.xwork2.ActionSupport;
-
-import TBS.Model.User;
 import TBS.Service.SignService;
 
 public class SignAction extends ActionSupport implements ServletRequestAware, ServletResponseAware {
@@ -51,7 +47,6 @@ public class SignAction extends ActionSupport implements ServletRequestAware, Se
 			return EMPTY;
 		} else if (signService.checkUser(username, password, role)) {
 			session.setAttribute("username", username);
-			session.setAttribute("password", password);
 			String json = "{\"result\":\"success\",\"message\":\"success\"}";
 			outputJson(json);
 			return EMPTY;
@@ -70,10 +65,7 @@ public class SignAction extends ActionSupport implements ServletRequestAware, Se
 		if (signService.checkUserEmpty(username)) {
 			System.out.println("sign start");
 			session.setAttribute("username", username);
-			session.setAttribute("password", password);
-			System.out.println("after setAttribute");
 			signService.signupUser(username, name, email, password);
-			System.out.println("after signService.signupUser");
 			String json = "{\"result\":\"success\",\"message\":\"success\"}";
 			outputJson(json);
 			return EMPTY;		
