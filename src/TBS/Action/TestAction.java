@@ -12,6 +12,7 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import com.opensymphony.xwork2.ActionSupport;
 
 import TBS.Service.TestService;
+import sun.invoke.empty.Empty;
 
 public class TestAction extends ActionSupport implements ServletRequestAware, ServletResponseAware {
 	
@@ -30,6 +31,7 @@ public class TestAction extends ActionSupport implements ServletRequestAware, Se
 	
 	private void outputJson(String json) throws Exception {
 		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html; charset=utf-8");
 		PrintWriter out = response.getWriter();
 		out.write(json);
 		out.flush();
@@ -44,12 +46,39 @@ public class TestAction extends ActionSupport implements ServletRequestAware, Se
 		return EMPTY;
 	}
 	
+	public String getTestrecordList() throws Exception {
+		String Username = request.getParameter("Username");
+		int start = Integer.parseInt(request.getParameter("start"));
+		int limit = Integer.parseInt(request.getParameter("limit"));
+		String json = testService.getTestrecordList(Username, start, limit);
+		outputJson(json);
+		return EMPTY;
+	}
+	
 	public String submitPaper() throws Exception {
 		String username = request.getParameter("username");
 		String courseID = request.getParameter("courseID");
 		String questionIDList = request.getParameter("questionIDList");
 		String answerList = request.getParameter("answerList");
 		String json = testService.submitPaper(username, courseID, questionIDList, answerList);
+		outputJson(json);
+		return SUCCESS;
+	}
+	
+	public String getScoresList() throws Exception {
+		String courseID = request.getParameter("courseID");
+		int start = Integer.parseInt(request.getParameter("start"));
+		int limit = Integer.parseInt(request.getParameter("limit"));
+		String json = testService.getScoresList(courseID, start, limit);
+		outputJson(json);
+		return SUCCESS;
+	}
+	
+	public String getTestBaseList() throws Exception {
+		String courseID = request.getParameter("courseID");
+		int start = Integer.parseInt(request.getParameter("start"));
+		int limit = Integer.parseInt(request.getParameter("limit"));
+		String json = testService.getTestBaseList(courseID, start, limit);
 		outputJson(json);
 		return SUCCESS;
 	}

@@ -77,12 +77,14 @@ $(function() {
 
 <body>
 	<div class="uk-navbar x-container">             
-        <a href="/" class="uk-navbar-brand uk-visible-large">题库管理系统</a>
-        <a href="/" class="uk-navbar-brand uk-hidden-large"><i class="uk-icon-home"></i></a>
+        <a href="/TBS" class="uk-navbar-brand uk-visible-large">题库管理系统</a>
+        <a href="/TBS" class="uk-navbar-brand uk-hidden-large"><i class="uk-icon-home"></i></a>
         <ul id="ul-navbar" class="uk-navbar-nav uk-hidden-small">                    
             <li><a href="/TBS/homepage">主页</a></li>                    
             <li class="uk-active"><a href="/TBS/select">选择科目</a></li>                    
-            <li><a href="/TBS/person">个人中心</a></li>                    
+            <li><a href="/TBS/person">个人中心</a></li>
+            <li><a href="/TBS/scores">成绩管理</a></li>
+            <li><a href="/TBS/testbase">题库管理</a></li>
         </ul>
 
         <div class="uk-navbar-flip">
@@ -150,8 +152,7 @@ $(function() {
 								</div>
 							</div>
 						</div>
-					</li>
-					
+					</li>					
 				</ul>
 
 			</div>

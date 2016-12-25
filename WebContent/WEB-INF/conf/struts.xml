@@ -39,6 +39,12 @@
 		<action name="test">
 			<result>/test.jsp</result>
 		</action>
+		<action name="scores">
+			<result>/scores.jsp</result>
+		</action>
+		<action name="testbase">
+			<result>/testbase.jsp</result>
+		</action>
 		
 		<!-- 配置Action的地址 -->
 		<action name="SignAction_*" class="SignAction" method="{1}">

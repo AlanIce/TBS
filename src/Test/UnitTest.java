@@ -1,5 +1,6 @@
 package Test;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -17,7 +18,7 @@ public class UnitTest {
 	private Transaction transaction;
 	
 	
-	@Before
+//	@Before
 	public void init() {
 		Configuration config = new Configuration().configure("Test/hibernate.cfg.xml");
 		sessionFactory = config.buildSessionFactory();
@@ -25,7 +26,7 @@ public class UnitTest {
 		transaction = session.beginTransaction();
 	}
 	
-	@After
+//	@After
 	public void destroy() {
 		transaction.commit();
 		session.close();
@@ -33,25 +34,17 @@ public class UnitTest {
 	}
 	
 	@Test
-	public void createCourse() {
-		Course course = new Course();
-		course.setCourseId("004");
-		course.setCourseName("计算机系统结构");
-		course.setCourseImgSrc("/TBS/lib/image/courseCover/004.jpg");
-		course.setTeacher("葛辉");
-		session.update(course);
- 	}
+	public void show() {
+		String hql = "SELECT count(*) FROM (SELECT t FROM Testrecord t WHERE courseID='001' and t.score=( "
+				+ "SELECT max(score) FROM Testrecord WHERE username=t.username ) GROUP BY username)";
+		TypedQuery<BigInteger> query = session.createQuery(hql);
+		int count = query.getSingleResult().intValue();
+		System.out.println("Count : " + count);
+	}
 	
 	@Test
-	public void testQuestion() {
-		String hql = "from Question where CourseID='001' order by rand()";
-		TypedQuery<Question> query = session.createQuery(hql);
-		query.setMaxResults(5);
-		List<Question> questiones = query.getResultList();
-		for (Question question:questiones) {
-			System.out.println(question.getId());
-		}
-		
-		
+	public void jsonTest() {
+		String s = "你好，\"明天\"";
+		System.out.println(s.replace("\"", "'"));
 	}
 }

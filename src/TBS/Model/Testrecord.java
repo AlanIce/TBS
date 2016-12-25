@@ -1,5 +1,5 @@
 package TBS.Model;
-// Generated Dec 1, 2016 11:52:11 PM by Hibernate Tools 5.1.0.Beta1
+// Generated Dec 16, 2016 9:37:02 PM by Hibernate Tools 5.1.0.Beta1
 
 import java.util.Date;
 
