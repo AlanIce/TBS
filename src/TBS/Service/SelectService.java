@@ -22,7 +22,6 @@ public class SelectService {
 				+ ",\"CourseImgSrc\":\"" + course.getCourseImgSrc() + "\"" + "}";
 		}
 		json += "]}";
-		System.out.println(json);
 		return json;
 	}
 	

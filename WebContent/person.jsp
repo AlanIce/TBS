@@ -23,6 +23,7 @@ username = "<%=session.getAttribute("username") %>";
 }
 .x-panel-header{ text-align:center; }
 .x-grid-table .x-grid-cell-inner { font-size: 16px; }
+tr.x-grid-record-red .x-grid-td { color: RED; }
 </style>
 </head>
 <body>

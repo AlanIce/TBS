@@ -13,10 +13,12 @@ import java.util.List;
 
 public class TestService {
 	
-	private TestDao testDao;
+	private TestDao testDao;	
+	private final int QuestionNum = 10;		//卷子题目数量
+	private final int SingleScore = 10;		//一题的分数
 
-	public String getQuestionList(String CourseID, int limit) {
-		List<Question> questions = testDao.getQuestionList(CourseID, limit);
+	public String getQuestionList(String CourseID) {
+		List<Question> questions = testDao.getQuestionList(CourseID, QuestionNum);
 		int total = questions.size();
 		Course course = testDao.getCourse(CourseID);
 		String json = "{\"Project\":\""+course.getCourseName()+"\",\"total\":"+total+",\"data\":[";
@@ -79,7 +81,7 @@ public class TestService {
 			String StdAnswer = question.getAnswer();
 			String MyAnswer  = answerArray[i];
 			if (StdAnswer.equals(MyAnswer)) 
-				score += 5;
+				score += SingleScore;
 		}
 		Date date = new Date();
 		Timestamp t = new Timestamp(date.getTime());
@@ -115,9 +117,9 @@ public class TestService {
 		return json;
 	}
 	
-	public String getTestBaseList(String CourseID, int start, int limit) {
-		List<Question> questions = testDao.getTestBaseList(CourseID, start, limit);
-		int total = testDao.getTestBaseCount(CourseID);
+	public String getTestBaseList(String CourseID, String findStr, int start, int limit) {
+		List<Question> questions = testDao.getTestBaseList(CourseID, findStr, start, limit);
+		int total = testDao.getTestBaseCount(CourseID, findStr);
 		String json = "{\"total\":" + total + ",\"data\":[";
 		int n = questions.size();
 		for (int i = 0; i < n; i++) {
@@ -133,6 +135,28 @@ public class TestService {
 				+ ",\"Answer\":\"" + question.getAnswer() + "\"}";
 		}
 		json += "]}";
+		return json;
+	}
+	
+	public String addTestBase(Question question) {
+		testDao.addTestBase(question);
+		String json = "{\"result\":\"success\"}";
+		return json;
+	}
+	
+	public String editTestBase(Question question) {
+		testDao.editTestBase(question);
+		String json = "{\"result\":\"success\"}";
+		return json;
+	}
+	
+	public String deleteTestBase(String IDList) {
+		String[] IDArray = IDList.split(",");
+		for (String ID : IDArray) {
+			Question question = testDao.getQuestion(Integer.parseInt(ID));
+			testDao.deleteTestBase(question);
+		}
+		String json = "{\"result\":\"success\"}";
 		return json;
 	}
 	

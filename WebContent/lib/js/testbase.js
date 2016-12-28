@@ -1,5 +1,8 @@
 Ext.onReady(function() {
-	var courseID;
+	var findStr = '';		// 搜索关键字，默认为空
+	var selRecs = [];		// 选中的记录
+	var IDList = [];		// 选中的记录的ID
+	var courseID;			// 课程ID
 	var forms;
 	var pageSize = 25;
 	var dataStore = Ext.create('Ext.data.Store', {
@@ -24,8 +27,6 @@ Ext.onReady(function() {
 		},
 		pageSize: pageSize
 	});
-	
-	
 	var courseStore = Ext.create('Ext.data.Store', {
 		fields: [
 			{ name: 'CourseName' },
@@ -44,6 +45,14 @@ Ext.onReady(function() {
 		}
 	});
 	
+	var getSel = function() {
+		selRecs = [];  //清空数组
+		IDList = [];
+		selRecs = grid.getSelectionModel().getSelection();
+		for (var i = 0; i < selRecs.length; i++)
+			IDList.push(selRecs[i].data.ID);
+	};
+	
 	var panel = Ext.create('Ext.panel.Panel', {
 		renderTo: 'TestBaseTable',
 		title: '题库管理',
@@ -54,6 +63,38 @@ Ext.onReady(function() {
 		}
 	});
 	
+	var reloadStore = function() {
+		findStr = textSearch.getValue();
+		dataStore.on('beforeload', function (store, options) {
+			Ext.apply(dataStore.proxy.extraParams, { courseID: courseID, findStr: findStr }); 
+		});
+		bbar.moveFirst();
+//		dataStore.load({
+//			callback: function(records, operation, success) {
+//				if (success) bbar.moveFirst();
+//				else Ext.Msg.alert("数据载入失败！");}
+//		});
+	};
+	var textSearch = Ext.create('Ext.form.TextField', {
+		emptyText: '请输入查询内容',
+		width: 150,
+		height: 25,
+		listeners: {  
+			specialkey: function(field,e) {
+				if (e.getKey() == Ext.EventObject.ENTER) {
+					reloadStore();
+				}
+			}
+		}
+
+	});
+	var btnSearch = Ext.create('Ext.Button', {
+		width: 55,
+		height: 32,
+		text: '查询',
+		icon: "lib/image/toolbar/search.png",
+		handler: reloadStore
+	});
 	var btnAdd = Ext.create('Ext.Button', {
 		width: 55,
 		height: 32,
@@ -61,92 +102,9 @@ Ext.onReady(function() {
 		icon: "lib/image/toolbar/add.gif",
 		handler: function() {
 			createForm({
-				autoScroll: true,
-				bodyPadding: 5,
 				action: 'addProject',
-				url: "",
-				items: [{
-					xtype: 'container',
-					anchor: '100%',
-					layout: 'hbox',
-					items:[{
-						xtype: 'container',
-						flex: 1,
-						layout: 'anchor',
-						items: [{
-							xtype:'textfield',
-							fieldLabel: 'ID',
-							labelWidth: 120,
-							labelAlign: 'right',
-							anchor:'100%',
-							name: 'ID',
-							hidden: true,
-							hiddenLabel: true
-						},{
-							xtype:'textfield',
-							fieldLabel: 'Accessory',
-							labelWidth: 120,
-							labelAlign: 'right',
-							anchor:'100%',
-							name: 'Accessory',
-							hidden: true,
-							hiddenLabel: true
-						},{
-							xtype:'textfield',
-							fieldLabel: '设施、装备、物资名称',
-							labelWidth: 150,
-							labelAlign: 'right',
-							anchor:'100%',
-							name: 'Content'
-						},{
-							xtype:'textfield',
-							fieldLabel: '数量',
-							labelAlign: 'right',
-							labelWidth: 150,
-							anchor:'100%',
-							name: 'Quantity'
-						},{
-							xtype:'textfield',
-							fieldLabel: '设施、装备、物资状态',
-							labelWidth: 150,
-							labelAlign: 'right',
-							anchor:'100%',
-							name: 'State'
-						},{
-							xtype:'textfield',
-							fieldLabel: '负责人',
-							labelWidth: 150,
-							labelAlign: 'right',
-							anchor:'100%',
-							name: 'Responsible'
-						}]
-					},{
-						xtype: 'container',
-						flex: 1,
-						layout: 'anchor',
-						items: [{
-							xtype:'textfield',
-							fieldLabel: '所属类别',
-							labelAlign: 'right',
-							anchor:'100%',
-							name: 'Type'
-						},{
-							xtype:'textfield',
-							fieldLabel: '单位',
-							labelAlign: 'right',
-							anchor:'100%',
-							name: 'Unit'
-						},{
-							xtype:'textfield',
-							fieldLabel: '存放地点',
-							labelAlign: 'right',
-							anchor:'100%',
-							name: 'Place'
-						}]
-					}]
-				}]
+				url: "TestAction_addTestBase"
 			});
-			bbar.moveFirst();	//状态栏回到第一页
 			showWin( { winId: 'addProject', title: '新增题库', items: [forms] } );
 		}
 	});
@@ -155,14 +113,28 @@ Ext.onReady(function() {
 		height: 32,
 		text: '编辑',
 		disabled:true,
-		icon: "lib/image/toolbar/edit.png"
+		icon: "lib/image/toolbar/edit.png",
+		handler: function() {
+			createForm({
+				action: 'editProject',
+				url: "TestAction_editTestBase"
+			});
+			showWin( { winId: 'editProject', title: '修改题库', items: [forms] } );
+		}
 	});
 	var btnDel = Ext.create('Ext.Button', {
 		width: 55,
 		height: 32,
 		text: '删除',
 		disabled:true,
-		icon: "lib/image/toolbar/delete.gif"
+		icon: "lib/image/toolbar/delete.gif",
+		handler: function() {
+			getSel();
+			Ext.Msg.confirm('删除', '确定彻底删除吗？', function(buttonID) {
+				if (buttonID == 'yes')
+					$.getJSON(encodeURI('TestAction_deleteTestBase'), { IDList: IDList.toString()}, function (res) { bbar.moveFirst(); });
+			});
+		}
 	});
 	
 	var comboBox = new Ext.form.ComboBox({
@@ -180,14 +152,8 @@ Ext.onReady(function() {
 			},
 			'change': function(combo, records, eOpts) {
 				courseID = combo.getValue();
-				dataStore.on('beforeload', function (store, options) {
-					Ext.apply(dataStore.proxy.extraParams, { courseID: courseID }); 
-				});
-				dataStore.load({
-					callback: function (records, operation, success) {
-						if (success) bbar.moveFirst();
-						else alert("load failed");}
-				});
+				textSearch.setValue('');
+				reloadStore();
 			}
 		}
 	});
@@ -196,9 +162,13 @@ Ext.onReady(function() {
 		defaults: { scale: 'medium' }
 	});
 	
+	tbar.add(textSearch);
+	tbar.add(btnSearch);
+	tbar.add('-');
 	tbar.add(btnAdd);
 	tbar.add(btnEdit);
 	tbar.add(btnDel);
+	tbar.add('-');
 	tbar.add(comboBox);
 	
 	var bbar = Ext.create('Ext.PagingToolbar',{
@@ -212,11 +182,69 @@ Ext.onReady(function() {
 	var createForm = function(config) {
 		forms = Ext.create('Ext.form.Panel', {
 			renderTo: Ext.getBody(),
-			bodyPadding: config.bodyPadding,
+			bodyPadding: 5,
 			buttonAlign: 'center',
 			autoScroll: true,
 			frame: false,
-			items: config.items,
+			items: [{
+				xtype: 'container',
+				flex: 1,
+				layout: 'anchor',
+				items: [{
+					xtype:'textfield',
+					fieldLabel: 'ID',
+					name: 'ID',
+					hidden: true,
+					hiddenLabel: true
+				},{
+					xtype:'textarea',
+					fieldLabel: '题目',
+					labelWidth: 50,
+					labelAlign: 'right',
+					anchor:'100%',
+					name: 'Question'
+				},{
+					xtype:'textfield',
+					fieldLabel: '选项A',
+					labelAlign: 'right',
+					labelWidth: 50,
+					anchor:'100%',
+					name: 'OptionA'
+				},{
+					xtype:'textfield',
+					fieldLabel: '选项B',
+					labelAlign: 'right',
+					labelWidth: 50,
+					anchor:'100%',
+					name: 'OptionB'
+				},{
+					xtype:'textfield',
+					fieldLabel: '选项C',
+					labelAlign: 'right',
+					labelWidth: 50,
+					anchor:'100%',
+					name: 'OptionC'
+				},{
+					xtype:'textfield',
+					fieldLabel: '选项D',
+					labelAlign: 'right',
+					labelWidth: 50,
+					anchor:'100%',
+					name: 'OptionD'
+				},{
+					xtype:'radiogroup',
+					fieldLabel: '答案',
+					labelAlign: 'right',
+					labelWidth: 50,
+					anchor:'100%',
+					items:[
+							{boxLabel: '选项A', name: 'Answer', inputValue: 'A', checked: true},
+							{boxLabel: '选项B', name: 'Answer', inputValue: 'B'},
+							{boxLabel: '选项C', name: 'Answer', inputValue: 'C'},
+							{boxLabel: '选项D', name: 'Answer', inputValue: 'D'}
+					]
+				}]
+			}],
 			buttons: [{
 				text: '取消',
 				handler: function(){ this.up('window').close();	}
@@ -227,10 +255,13 @@ Ext.onReady(function() {
 						forms.form.submit({
 							clientValidation: true,
 							url: encodeURI(config.url),
-							success: function(form, action) { dataStore.load( { params: { start: 0, limit: pageSize } } );	},
-							failure: function(form, action) { Ext.Msg.alert('警告',action.result.msg); }
+							method : 'post',
+							params : {courseID: courseID},
+							success: function(form, action) { bbar.moveFirst();	},
+							failure: function(form, action) { bbar.moveFirst(); }
 						})
-						this.up('window').close();  	
+						this.up('window').close();
+						bbar.moveFirst();
 					} else Ext.Msg.alert('警告','请完善信息！'); 
 				}
 			},{
@@ -241,7 +272,6 @@ Ext.onReady(function() {
 				}
 			}]
 		});// forms定义结束
-
 		if (config.action == 'editProject') forms.getForm().loadRecord(selRecs[0]);  //加载选中记录数据
 	};
 	
@@ -249,8 +279,8 @@ Ext.onReady(function() {
 		var defaultCng = {
 			modal: true,  //设定为模态窗口
 			plain: true,
-			width: 800,
-			height: 500,
+			width: 600,
+			height: 400,
 			layout: 'fit',
 			titleAlign: 'center',
 			closable: true,		//可关闭的
@@ -281,7 +311,18 @@ Ext.onReady(function() {
 			{ text: '答案', dataIndex: 'Answer', align: 'center', width: 80},
 		],
 		bbar: bbar,
-		tbar: tbar
+		tbar: tbar,
+		viewConfig: { loadMask: { msg: '正在加载数据中……'	} },
+		listeners: {
+			selectionchange: function(me, selected, eOpts) {
+				selRecs = grid.getSelectionModel().getSelection();
+				if(selRecs.length == 1) btnEdit.enable();
+				else btnEdit.disable();
+				//多选的按钮
+				if(selRecs.length >= 1) btnDel.enable();
+				else btnDel.disable();
+			}
+		}
 	});
 	
 	panel.add(grid);

@@ -80,8 +80,15 @@ public class TestDao extends HibernateDaoSupport {
 		return users.get(0);
 	}
 	
-	public List<Question> getTestBaseList(String CourseID,int start, int limit) {
-		String hql = "FROM Question WHERE CourseID='"+CourseID+"' ORDER BY ID DESC";
+	public List<Question> getTestBaseList(String CourseID, String findStr, int start, int limit) {
+		String hql = "FROM Question WHERE CourseID='" + CourseID + "'";
+		if (findStr != null && !findStr.equals(""))
+			hql += " AND ( question like '%" + findStr
+				+ "%' or optionA like '%" + findStr
+				+ "%' or optionB like '%" + findStr
+				+ "%' or optionC like '%" + findStr
+				+ "%' or optionD like '%" + findStr +  "%' )";
+		hql += " ORDER BY ID DESC";
 		TypedQuery<Question> query = getSessionFactory().getCurrentSession().createQuery(hql);
 		query.setFirstResult(start);
 		query.setMaxResults(limit);
@@ -89,8 +96,14 @@ public class TestDao extends HibernateDaoSupport {
 		return questions;
 	}
 	
-	public int getTestBaseCount(String CourseID) {
+	public int getTestBaseCount(String CourseID, String findStr) {
 		String hql = "SELECT count(*) FROM Question WHERE CourseID='"+CourseID+"'";
+		if (findStr != null && !findStr.equals(""))
+			hql += " AND ( question like '%" + findStr
+				+ "%' or optionA like '%" + findStr
+				+ "%' or optionB like '%" + findStr
+				+ "%' or optionC like '%" + findStr
+				+ "%' or optionD like '%" + findStr +  "%' )";
 		TypedQuery<Long> query = getSessionFactory().getCurrentSession().createQuery(hql);
 		int count = query.getSingleResult().intValue();
 		return count;
@@ -99,4 +112,17 @@ public class TestDao extends HibernateDaoSupport {
 	public void saveTestrecord(Testrecord t) {
 		getHibernateTemplate().save(t);
 	}
+	
+	public void addTestBase(Question q) {
+		getHibernateTemplate().save(q);
+	}
+
+	public void editTestBase(Question q) {
+		getHibernateTemplate().update(q);
+	}
+
+	public void deleteTestBase(Question q) {
+		getHibernateTemplate().delete(q);
+	}
+	
 }

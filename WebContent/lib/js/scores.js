@@ -1,5 +1,6 @@
 Ext.onReady(function() {
-	var pageSize = 20;
+	var courseID;
+	var pageSize = 25;
 	var dataStore = Ext.create('Ext.data.Store', {
 		fields: [
 			{ name: 'Username' },
@@ -9,7 +10,7 @@ Ext.onReady(function() {
 		],
 		proxy: {
 			type: 'ajax',
-			url: encodeURI('TestAction_getScoresList?&CourseID='),
+			url: encodeURI('TestAction_getScoresList'),
 			getMethod: function() { return 'POST'; },
 			reader: {   				//这里的reader为数据存储组织的地方，下面的配置是为json格式的数据，例如：[{"total":50,"rows":[{"a":"3","b":"4"}]}]
 				type: 'json', 			//返回数据类型为json格式
@@ -29,6 +30,62 @@ Ext.onReady(function() {
    	        'resize' : function (component, width, height, oldWidth, oldHeight, eOpts) {}
 		}
 	});
+	
+	var courseStore = Ext.create('Ext.data.Store', {
+		fields: [
+			{ name: 'CourseName' },
+			{ name: 'CourseID' }
+		],
+		method : 'POST',
+		proxy: {
+			type: 'ajax',
+			url: encodeURI('SelectAction_getCourseList'),
+			getMethod: function() { return 'POST'; },
+			reader: {   				//这里的reader为数据存储组织的地方，下面的配置是为json格式的数据，例如：[{"total":50,"rows":[{"a":"3","b":"4"}]}]
+				type: 'json', 			//返回数据类型为json格式
+				root: 'data',  			//数据
+				totalProperty: 'total' 	//数据总条数
+			}
+		}
+	});
+	
+	var comboBox = new Ext.form.ComboBox({
+		store: courseStore,
+		displayField: 'CourseName',
+		valueField: "CourseID",
+		editable : false,
+		selectOnFocus:true,
+		autoSelect: true,
+		listeners: {   
+			render : function(cb) {
+				cb.getStore().on("load", function(s, r, o) {   
+					cb.setValue(r[0].get('CourseID'));
+				});   
+			},
+			'change': function(combo, records, eOpts) {
+				courseID = combo.getValue();
+				dataStore.on('beforeload', function(store, options) {
+					Ext.apply(dataStore.proxy.extraParams, { courseID: courseID }); 
+				});
+				bbar.moveFirst();
+			}
+		}
+	});
+	
+	var bbar = Ext.create('Ext.PagingToolbar',{
+		pageSize: pageSize,
+		displayInfo: true,
+		emptyMsg: "没有数据要显示！",
+		displayMsg: "当前为第{0}--{1}条，共{2}条数据", //参数是固定的，分别是起始和结束记录数、总记录数
+		store: dataStore
+	});
+	
+	var tbar = new Ext.Toolbar({
+		defaults: { scale: 'medium' }
+	});
+	
+	tbar.add('课程选择：')
+	tbar.add(comboBox);
 		
 	var grid = Ext.create('Ext.grid.Panel', {
 		store: dataStore,
@@ -39,17 +96,12 @@ Ext.onReady(function() {
 			{ text: '学号', dataIndex: 'Username', align: 'center', width: 180},
 			{ text: '姓名', dataIndex: 'Name', align: 'center', width: 120},
 			{ text: '考试时间', dataIndex: 'TestDate', align: 'center', width: 175},
-			{ text: '得分', dataIndex: 'Score', align: 'center', width: 80},
+			{ text: '得分', dataIndex: 'Score', align: 'center', width: 80}
 		],
-		bbar: Ext.create('Ext.PagingToolbar',{
-			pageSize: pageSize,
-			displayInfo: true,
-			emptyMsg: "没有数据要显示！",
-			displayMsg: "当前为第{0}--{1}条，共{2}条数据", //参数是固定的，分别是起始和结束记录数、总记录数
-			store: dataStore
-		})
+		tbar: tbar,
+		bbar: bbar
 	});
 	
 	panel.add(grid);
-	dataStore.load( { params: {courseID: '001'} } );
+	courseStore.load();
 })
