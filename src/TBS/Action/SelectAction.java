@@ -43,6 +43,15 @@ public class SelectAction extends ActionSupport implements ServletRequestAware, 
 		return EMPTY;
 	}
 	
+	public String getMyCourseList() throws Exception {
+		String username = (String)session.getAttribute("username");
+		System.out.println("Debug:" + username);
+		String type = request.getParameter("type");
+		String json = selectService.getMyCourseList(username, type);
+		outputJson(json);
+		return EMPTY;
+	}	
+	
 	@Override
 	public void setServletRequest(HttpServletRequest arg0) {
 		this.request = arg0;

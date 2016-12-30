@@ -55,14 +55,33 @@ public class TestService {
 			String TestDate = sdf.format(testrecord.getTestDate());
 			String courseID = testrecord.getCourseId();
 			Course course = testDao.getCourse(courseID);
-			json += "{\"Project\":\"" + course.getCourseName() + "\""
-				+ ",\"Teacher\":\"" + course.getTeacher() + "\""
+			json += "{\"CourseName\":\"" + course.getCourseName() + "\""
 				+ ",\"TestDate\":\"" + TestDate + "\""
 				+ ",\"Score\":" + testrecord.getScore() + "}";
 		}
 		json += "]}";
-		return json;
-		
+		return json;		
+	}
+	
+	public String getFinalTestrecordList(String Username, int start, int limit) {
+		List<Testrecord> testrecords = testDao.getFinalTestrecordList(Username, start, limit);
+		int total = testDao.getFinalTestrecordCount(Username);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
+		String json = "{\"total\":" + total + ",\"data\":[";
+		int n = testrecords.size();
+		for (int i = 0; i < n; i++) {
+			Testrecord testrecord = testrecords.get(i);
+			if (i > 0) 
+				json += ",";
+			String TestDate = sdf.format(testrecord.getTestDate());
+			String courseID = testrecord.getCourseId();
+			Course course = testDao.getCourse(courseID);
+			json += "{\"CourseName\":\"" + course.getCourseName() + "\""
+				+ ",\"TestDate\":\"" + TestDate + "\""
+				+ ",\"Score\":" + testrecord.getScore() + "}";
+		}
+		json += "]}";
+		return json;		
 	}
 	
 	public String submitPaper(String username, String courseID,String questionIDList, String answerList) {

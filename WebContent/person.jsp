@@ -58,16 +58,19 @@ tr.x-grid-record-red .x-grid-td { color: RED; }
     
     <div class="uk-container uk-container-center uk-margin-large-top uk-margin-large-bottom">
         <div class="uk-grid">
-            <div class="main-grid uk-width-medium-1-4">
+            <div class="main-grid uk-width-medium-1-2">
                 <div class="uk-vertical-align uk-text-center">
-                    
+                    <div class="uk-vertical-align uk-text-center">
+	                    <h1 class="uk-heading-large"><span id="Project"></span>选课记录</h1>
+	                </div>
+	                <div id="UserCourseTable" class="uk-container uk-container-center"></div>
                 </div>
             </div>
-            <div class="table-grid uk-width-medium-3-4">
+            <div class="table-grid uk-width-medium-1-2">
                 <div class="uk-vertical-align uk-text-center">
                     <h1 class="uk-heading-large"><span id="Project"></span>考试记录</h1>
                 </div>
-                <div id="TestRecordTable" class="uk-container uk-container-center uk-width-medium-4-5"></div>
+                <div id="TestRecordTable" class="uk-container uk-container-center"></div>
             </div>
             <div class="uk-width-medium-1-4">
             

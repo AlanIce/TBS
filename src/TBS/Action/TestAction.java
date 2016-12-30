@@ -48,10 +48,19 @@ public class TestAction extends ActionSupport implements ServletRequestAware, Se
 	}
 	
 	public String getTestrecordList() throws Exception {
-		String Username = request.getParameter("Username");
+		String username = request.getParameter("username");
 		int start = Integer.parseInt(request.getParameter("start"));
 		int limit = Integer.parseInt(request.getParameter("limit"));
-		String json = testService.getTestrecordList(Username, start, limit);
+		String json = testService.getTestrecordList(username, start, limit);
+		outputJson(json);
+		return EMPTY;
+	}
+	
+	public String getFinalTestrecordList() throws Exception {
+		String username = request.getParameter("username");
+		int start = Integer.parseInt(request.getParameter("start"));
+		int limit = Integer.parseInt(request.getParameter("limit"));
+		String json = testService.getFinalTestrecordList(username, start, limit);
 		outputJson(json);
 		return EMPTY;
 	}
