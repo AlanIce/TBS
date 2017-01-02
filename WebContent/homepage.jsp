@@ -47,8 +47,17 @@
             <div class="uk-width-medium-1-1">
                 <div class="uk-vertical-align uk-text-center" style="height: 450px;">
                     <div class="uk-vertical-align-middle uk-width-1-2">
-                        <h1 class="uk-heading-large">欢迎</h1>
-                        <p class="uk-text-large">欢迎使用 题库管理系统 ！</p>
+                        <h1 class="uk-heading-large" style="font-size: 56px;">欢迎</h1>
+                        <p class="uk-text-large" style="font-size: 28px;">欢迎使用题库管理系统 ！</p>
+                        <br><br>
+                    </div>
+                    
+                    	
+                    <div class="uk-vertical-align-middle uk-width-1-2">
+                        <p class="uk-text-large" align="left" style="font-size: 30px;">新注册用户指南：</p>
+                        <p class="uk-text-large" align="left">STEP1：进入个人中心页面选择相应课程，加入自己的课表</p>
+                        <p class="uk-text-large" align="left">STEP2：进入课程选择页面选择相应课程，点击图像进入考试</p>
+                        <p class="uk-text-large" align="left">STEP3：进入个人中心页面查看成绩</p>
                     </div>
                 </div>
             </div>

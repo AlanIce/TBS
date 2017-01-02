@@ -18,7 +18,7 @@ public class UnitTest {
 	private Transaction transaction;
 	
 	
-//	@Before
+	@Before
 	public void init() {
 		Configuration config = new Configuration().configure("Test/hibernate.cfg.xml");
 		sessionFactory = config.buildSessionFactory();
@@ -26,7 +26,7 @@ public class UnitTest {
 		transaction = session.beginTransaction();
 	}
 	
-//	@After
+	@After
 	public void destroy() {
 		transaction.commit();
 		session.close();
@@ -44,7 +44,12 @@ public class UnitTest {
 	
 	@Test
 	public void jsonTest() {
-		String s = "你好，\"明天\"";
-		System.out.println(s.replace("\"", "'"));
+		String CourseID = "001";
+		int lo = 0;
+		int hi = 60;
+		String sql = "SELECT count(*) FROM (SELECT * FROM Testrecord t WHERE courseID='"+CourseID+"' AND score=("
+				+ "SELECT max(score) FROM Testrecord WHERE username=t.username AND courseID='"+CourseID+"') GROUP BY username) a WHERE a.Score>="+lo+" AND a.Score<"+hi;
+		TypedQuery<BigInteger> query = session.createNativeQuery(sql);
+		System.out.println(query.getSingleResult().intValue());
 	}
 }

@@ -3,6 +3,8 @@ package TBS.Service;
 import TBS.Dao.SelectDao;
 import TBS.Dao.TestDao;
 import TBS.Model.Course;
+import TBS.Model.Usercourse;
+
 import java.util.List;
 
 public class SelectService {
@@ -36,12 +38,28 @@ public class SelectService {
 			Course course = courses.get(i);
 			json += "{\"CourseID\":\"" + course.getCourseId() + "\""
 				+ ",\"CourseName\":\"" + course.getCourseName() + "\""
+				+ ",\"CourseImgSrc\":\"" + course.getCourseImgSrc() + "\""
 				+ ",\"Teacher\":\"" + course.getTeacher() + "\"" + "}";
 		}
 		json += "]}";
 		return json;
 	}
 	
+	public String pickupCourse(String type, String username, String courseID) {
+		String json = "{\"result\":\"success\"}";
+		selectDao.deleteUserCourse(username, courseID);
+		if (type.equals("add")) {
+			Usercourse usercourse = new Usercourse();
+			usercourse.setUsername(username);
+			usercourse.setCourseId(courseID);
+			usercourse.setCompleted(false);
+			selectDao.addUserCourse(usercourse);
+		} else if (type.equals("del")) {
+			selectDao.deleteTestrecord(username, courseID);
+		}
+		return json;
+		
+	}
 	public SelectDao getSelectDao() {
 		return selectDao;
 	}

@@ -268,7 +268,6 @@ check_signin = function() {
 	var username = $('.signin form input.username').val();
 	var password = $('.signin form input.password').val();
 	if (role == 'normal') {
-		$('form').find('.formtips').remove();
 		if (!/^[0-9]{13}/.test(username)) {
 			var errorMsg = '请输入13位的学号';
 			$('.signin form input.username').after('<div class="formtips"><span>'+errorMsg+'</span></div>');

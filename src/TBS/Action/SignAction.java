@@ -46,7 +46,6 @@ public class SignAction extends ActionSupport implements ServletRequestAware, Se
 			outputJson(json);
 			return EMPTY;
 		} else if (signService.checkUser(username, password, role)) {
-			session.setAttribute("username", username);
 			String json = "{\"result\":\"success\",\"message\":\"success\"}";
 			outputJson(json);
 			return EMPTY;
@@ -74,6 +73,21 @@ public class SignAction extends ActionSupport implements ServletRequestAware, Se
 			outputJson(json);
 			return EMPTY;
 		}		
+	}
+	
+	public String changePassword() throws Exception {
+		String username = (String)session.getAttribute("username");
+		Boolean role = (Boolean)session.getAttribute("role");
+		String rawpassword = request.getParameter("rawpassword");
+		String newpassword = request.getParameter("newpassword");
+		String json;
+		if (signService.checkUser(username, rawpassword, role)) {
+			signService.changePassword(username, newpassword);
+			json = "{\"result\":\"success\",\"message\":\"success\"}";
+		} else
+			json = "{\"result\":\"failed\",\"message\":\"原密码错误！\"}";
+		outputJson(json);
+		return EMPTY;
 	}
 	
 	@Override

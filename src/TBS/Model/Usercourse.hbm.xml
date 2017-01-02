@@ -1,19 +1,21 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Dec 16, 2016 9:37:37 PM by Hibernate Tools 5.1.0.Beta1 -->
+<!-- Generated Jan 1, 2017 1:42:29 PM by Hibernate Tools 5.1.0.Beta1 -->
 <hibernate-mapping>
     <class name="TBS.Model.Usercourse" table="usercourse" catalog="tbs" optimistic-lock="version">
-        <composite-id name="id" class="TBS.Model.UsercourseId">
-            <key-property name="username" type="string">
-                <column name="Username" length="20" />
-            </key-property>
-            <key-property name="courseId" type="string">
-                <column name="CourseID" length="10" />
-            </key-property>
-            <key-property name="completed" type="java.lang.Boolean">
-                <column name="Completed" />
-            </key-property>
-        </composite-id>
+        <id name="id" type="java.lang.Integer">
+            <column name="ID" />
+            <generator class="identity" />
+        </id>
+        <property name="username" type="string">
+            <column name="Username" length="20" not-null="true" />
+        </property>
+        <property name="courseId" type="string">
+            <column name="CourseID" length="10" not-null="true" />
+        </property>
+        <property name="completed" type="boolean">
+            <column name="Completed" not-null="true" />
+        </property>
     </class>
 </hibernate-mapping>

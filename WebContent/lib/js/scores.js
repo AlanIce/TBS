@@ -27,7 +27,7 @@ Ext.onReady(function() {
 		layout : 'fit',
 		autoScroll : true,
 		listeners : {
-   	        'resize' : function (component, width, height, oldWidth, oldHeight, eOpts) {}
+			'resize' : function (component, width, height, oldWidth, oldHeight, eOpts) {}
 		}
 	});
 	
@@ -72,6 +72,32 @@ Ext.onReady(function() {
 		}
 	});
 	
+	var radiogroup = {
+		xtype: 'radiogroup',
+		itemId: 'score_type',
+		width: 270,
+		items: [{
+			xtype: 'radio',
+			boxLabel: '已考试',
+			name: 'Type',
+			inputValue: 'radio1',
+			checked: true,
+		},{
+			xtype: 'radio',
+			boxLabel: '未考试',
+			name: 'Type',
+			inputValue: 'radio2',
+		}],
+		listeners: {
+			'change': function(obj) {
+				var type = obj.lastValue['Type'];
+				if(type == 'radio1') dataStore.getProxy().url = encodeURI('TestAction_getScoresList');
+				else if(type == 'radio2') dataStore.getProxy().url = encodeURI('TestAction_getUnUserList');
+				bbar.moveFirst();
+			}
+		}
+	};
+	
 	var bbar = Ext.create('Ext.PagingToolbar',{
 		pageSize: pageSize,
 		displayInfo: true,
@@ -83,14 +109,23 @@ Ext.onReady(function() {
 	var tbar = new Ext.Toolbar({
 		defaults: { scale: 'medium' }
 	});
-	
+		
 	tbar.add('课程选择：')
 	tbar.add(comboBox);
-		
+	tbar.add(radiogroup);
+	tbar.add({
+		text: '分数分布',
+		handler: function() { window.open('pie?courseID='+courseID); }
+	});
+	
 	var grid = Ext.create('Ext.grid.Panel', {
 		store: dataStore,
 		height: 600,
 		pageSize: pageSize,
+		viewConfig: { getRowClass: function(record, rowIndex, rowParams, store) {
+				if (record.get('Score') < 60)  return 'x-grid-record-red';
+			}
+		},
 		columns: [
 			{ text: '序号', xtype: 'rownumberer',width: 40, sortable: false},
 			{ text: '学号', dataIndex: 'Username', align: 'center', width: 180},

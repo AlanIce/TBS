@@ -46,7 +46,14 @@
 }
 </style>
 <script type="text/javascript">
-function appendCourse(courseID, courseName, courseImgSrc) {
+var role = '<%=role%>';
+if (role != "普通用户") {
+	alert("该页面只能由普通用户访问！");
+	window.location.href = "homepage";
+}
+</script>
+<script type="text/javascript">
+function appendCourse(obj, courseID, courseName, courseImgSrc) {
 	var html = '<div class="uk-width-medium-1-3 uk-text-center">'
 		 + '<div class="uk-thumbnail uk-overlay-hover">'
 		 + '<figure class="uk-overlay">'
@@ -58,19 +65,24 @@ function appendCourse(courseID, courseName, courseImgSrc) {
 		 + '</div>'
 		 + '<h2 class="uk-margin-bottom-remove">'+courseName+'</h2>'
 		 + '</div>';
-	$('.all-course .uk-grid').append(html);
+	obj.append(html);
 }
-$(function() {
+function getMyCourse(type) {
 	$.ajax({
-        type: "GET",
-        url: "SelectAction_getCourseList",
+        type: "POST",
+        url: "SelectAction_getMyCourseList",
+        data: { type: type },
         dataType: "json",
         success: function(data){
         	for (var i = 0; i < data.total; i++) {
-        		appendCourse(data.data[i].CourseID, data.data[i].CourseName, data.data[i].CourseImgSrc);
+        		appendCourse($('.'+type+' .uk-grid'), data.data[i].CourseID, data.data[i].CourseName, data.data[i].CourseImgSrc);
         	}
         }
     });
+}
+$(function() {
+	getMyCourse('selected');
+	setTimeout("getMyCourse('uncompleted')",1000);
 })
 </script>
 </head>
@@ -116,43 +128,22 @@ $(function() {
 		<div class="uk-grid">
 			<div class="uk-width-1-1">
 				<ul class="uk-subnav uk-subnav-pill" data-uk-switcher="{connect:'#switcher-content'}">
-					<li class="uk-active"><a href="#">全部</a></li>
-					<li><a href="#">我选的课程</a></li>
+					<li class="uk-active"><a href="#">我选的课程</a></li>
 					<li><a href="#">未考的课程</a></li>					
 				</ul>
 
 				<ul id="switcher-content" class="uk-switcher">
-					<li class="uk-active all-course">
+					<li class="uk-active selected">
 						<div class="uk-grid">
 							
 						</div>
 					</li>
 
-					<li>
+					<li class="uncompleted">
 						<div class="uk-grid">
-							<div class="uk-width-medium-1-3">
-								<div class="uk-thumbnail uk-overlay-hover">
-									<figure class="uk-overlay"> <img width="600" src="/TBS/lib/image/background/1.jpg" alt="">
-										<figcaption class="uk-overlay-panel uk-overlay-icon uk-overlay-background uk-overlay-fade"></figcaption>
-										<a class="uk-position-cover" href="#"></a>
-									</figure>
-								</div>
-							</div>
+							
 						</div>
-					</li>
-				
-					<li>
-						<div class="uk-grid">
-							<div class="uk-width-medium-1-3">
-								<div class="uk-thumbnail uk-overlay-hover">
-									<figure class="uk-overlay"> <img width="600" src="/TBS/lib/image/background/1.jpg" alt="">
-										<figcaption class="uk-overlay-panel uk-overlay-icon uk-overlay-background uk-overlay-fade"></figcaption>
-										<a class="uk-position-cover" href="#"></a>
-									</figure>
-								</div>
-							</div>
-						</div>
-					</li>					
+					</li>						
 				</ul>
 
 			</div>

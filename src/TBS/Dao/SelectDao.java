@@ -26,15 +26,31 @@ public class SelectDao extends HibernateDaoSupport {
 	}
 	
 	public List<Course> getMyCourseList(String username, String type) {
-		String hql;
+		String hql = "";
 		if (type.equals("selected"))
 			hql = "FROM	Course a WHERE EXISTS ( FROM Usercourse WHERE username='"+username+"' AND courseId=a.courseId )";
 		else if (type.equals("unselected"))
 			hql = "FROM	Course a WHERE NOT EXISTS ( FROM Usercourse WHERE username='"+username+"' AND courseId=a.courseId )";
-		else
-			hql = "FROM Course WHERE courseID!=null";
+		else if (type.equals("uncompleted"))
+			hql = "FROM Course a WHERE EXISTS ( FROM Usercourse WHERE username='"+username+"' AND completed=0 AND courseId=a.courseId)";
 		TypedQuery<Course> query = getSessionFactory().getCurrentSession().createQuery(hql);
 		List<Course> courses = query.getResultList();
 		return courses;
+	}
+	
+	public void addUserCourse(Usercourse u) {
+		getHibernateTemplate().save(u);
+	}
+	
+	public void deleteUserCourse(String username, String courseID) {
+		String hql = "DELETE Usercourse WHERE username='"+username+"' AND courseID='"+courseID+"'";
+		TypedQuery query = getSessionFactory().getCurrentSession().createQuery(hql);
+		query.executeUpdate();
+	}
+	
+	public void deleteTestrecord(String username, String courseID) {
+		String hql = "DELETE Testrecord WHERE username='"+username+"' AND courseID='"+courseID+"'";
+		TypedQuery query = getSessionFactory().getCurrentSession().createQuery(hql);
+		query.executeUpdate();
 	}
 }

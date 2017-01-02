@@ -1,6 +1,19 @@
 Ext.onReady(function() {
 	var pageSize = 20;
-	
+	pickupCourse = function(type, courseID) {
+		$.ajax({
+	        type: "POST",
+	        url: "SelectAction_pickupCourse",
+	        data: {
+	        	type: type,
+	        	courseID: courseID
+	        },
+	        dataType: "json",
+	        success: function(data){
+	        	usercourseBbar.moveFirst();
+	        }
+	    });
+	};
 	// TestRecord Panel
 	var testrecordStore = Ext.create('Ext.data.Store', {
 		fields: [
@@ -23,13 +36,13 @@ Ext.onReady(function() {
 		pageSize: pageSize
 	});
 
-	var testrecordPanel = Ext.create('Ext.panel.Panel', {
+	testrecordPanel = Ext.create('Ext.panel.Panel', {
 		renderTo: 'TestRecordTable',
 		title: '考试记录',
 		layout : 'fit',
 		autoScroll : true,
 		listeners : {
-   	        'resize' : function (component, width, height, oldWidth, oldHeight, eOpts) {}
+			'resize' : function (component, width, height, oldWidth, oldHeight, eOpts) {}
 		}
 	});
 	
@@ -115,13 +128,13 @@ Ext.onReady(function() {
 		pageSize: pageSize
 	});
 
-	var usercoursePanel = Ext.create('Ext.panel.Panel', {
+	usercoursePanel = Ext.create('Ext.panel.Panel', {
 		renderTo: 'UserCourseTable',
-		title: '考试记录',
+		title: '选课情况',
 		layout : 'fit',
 		autoScroll : true,
 		listeners : {
-   	        'resize' : function (component, width, height, oldWidth, oldHeight, eOpts) {}
+			'resize' : function (component, width, height, oldWidth, oldHeight, eOpts) {}
 		}
 	});
 	
@@ -180,10 +193,20 @@ Ext.onReady(function() {
 			{ text: '序号', xtype: 'rownumberer',width: 40, sortable: false},
 			{ text: '课程号', dataIndex: 'CourseID', align: 'center', width: 80},
 			{ text: '科目', dataIndex: 'CourseName', align: 'center', width: 180},
-			{ text: '授课老师', dataIndex: 'Teacher', align: 'center', width: 120}
+			{ text: '授课老师', dataIndex: 'Teacher', align: 'center', width: 120},
+			{ text: '选课', align: 'center', width: 75, renderer: function (value, meta, record) {
+					var courseID = record.get('CourseID');
+					return	'<a><img src="lib/image/toolbar/add.gif" onclick="pickupCourse(\'add\', \''+courseID+'\')"></a>';
+				}
+			},
+			{ text: '选课', align: 'center', width: 75, renderer: function (value, meta, record) {
+					var courseID = record.get('CourseID');
+					return	'<a><img src="lib/image/toolbar/delete.gif" onclick="pickupCourse(\'del\', \''+courseID+'\')"></a>';
+				}
+			},
 		],
 		tbar: usercourseTbar,
 		bbar: usercourseBbar
 	});	
 	usercoursePanel.add(usercourseGrid);
-})
+});

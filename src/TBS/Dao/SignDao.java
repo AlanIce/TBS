@@ -16,13 +16,11 @@ public class SignDao extends HibernateDaoSupport {
 		return users.get(0);
 	}
 	
-	public void saveUser(String username, String name, String email, String password) {
-		User user = new User();
-		user.setAdmin(false);
-		user.setUsername(username);
-		user.setName(name);
-		user.setEmail(email);
-		user.setPassword(password);
-		this.getHibernateTemplate().save(user);		
+	public void saveUser(User u) {
+		this.getHibernateTemplate().save(u);
+	}
+	
+	public void updateUser(User u) {
+		this.getHibernateTemplate().update(u);
 	}
 }

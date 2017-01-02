@@ -63,9 +63,6 @@ if (role == "普通用户") {
 	<div class="uk-container uk-container-center uk-margin-large-top uk-margin-large-bottom">
         <div class="uk-grid">
         	<div class="main-grid uk-width-medium-1-1">
-        		<div class="uk-vertical-align uk-text-center">
-                    <h1 class="uk-heading-large"><span id="Project"></span>题库管理</h1>
-                </div>
                 <div id="TestBaseTable" class="uk-container uk-container-center uk-width-medium-4-5"></div>   
         	</div>
                 

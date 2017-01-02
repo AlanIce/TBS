@@ -16,6 +16,7 @@ public class SignService {
 		boolean result = password.equals(user.getPassword()) && role == user.getAdmin();
 		if (result) {
 			session.setAttribute("user", user.getName());
+			session.setAttribute("username", username);
 			session.setAttribute("role", role);
 		}			
 		return result;
@@ -29,7 +30,19 @@ public class SignService {
 	public void signupUser(String username, String name, String email, String password) {
 		session.setAttribute("user", name);
 		session.setAttribute("role", false);
-		signDao.saveUser(username, name, email, password);
+		User user = new User();
+		user.setAdmin(false);
+		user.setUsername(username);
+		user.setName(name);
+		user.setEmail(email);
+		user.setPassword(password);
+		signDao.saveUser(user);
+	}
+	
+	public void changePassword(String username, String newpassword) {
+		User user = signDao.getUser(username);
+		user.setPassword(newpassword);
+		signDao.updateUser(user);
 	}
 	
 	public SignDao getSignDao() {

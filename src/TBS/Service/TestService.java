@@ -11,6 +11,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.query.criteria.internal.expression.function.AggregationFunction.COUNT;
+
 public class TestService {
 	
 	private TestDao testDao;	
@@ -84,7 +86,7 @@ public class TestService {
 		return json;		
 	}
 	
-	public String submitPaper(String username, String courseID,String questionIDList, String answerList) {
+	public String submitPaper(String username, String courseID, String questionIDList, String answerList) {
 		String[] questionIDArray = questionIDList.split(",");
 		String[] answerArray = answerList.split(",");
 		String json = "";
@@ -110,6 +112,7 @@ public class TestService {
 		testrecord.setTestDate(t);
 		testrecord.setScore(score);
 		testDao.saveTestrecord(testrecord);
+		testDao.updateUserCourse(username, courseID);
 		json = "{\"result\":\"success\",\"score\":\"" + score + "\"}";
 		return json;			
 	}
@@ -125,7 +128,6 @@ public class TestService {
 			if (i > 0) 
 				json += ",";
 			String TestDate = sdf.format(testrecord.getTestDate());
-			System.out.println(i + " : " + testrecord.getUsername());
 			User user = testDao.getUser(testrecord.getUsername());
 			json += "{\"Username\":\"" + user.getUsername() + "\""
 				+ ",\"Name\":\"" + user.getName() + "\""
@@ -133,6 +135,49 @@ public class TestService {
 				+ ",\"Score\":" + testrecord.getScore() + "}";
 		}
 		json += "]}";
+		return json;
+	}
+	
+	public String getUnUserList(String CourseID, int start, int limit) {
+		List<User> users = testDao.getUnUserList(CourseID, start, limit);
+		int total = testDao.getUnUserCount(CourseID);
+		String json = "{\"total\":" + total + ",\"data\":[";
+		int n = users.size();
+		for (int i = 0; i < n; i++) {
+			User user = users.get(i);
+			if (i > 0) 
+				json += ",";
+			json += "{\"Username\":\"" + user.getUsername() + "\""
+				+ ",\"Name\":\"" + user.getName() + "\"}";
+		}
+		json += "]}";
+		return json;
+	}
+	
+	public String getPieChart(String CourseID) {
+		String json = "";
+		int count = 0;
+		int num = testDao.getPieChart(CourseID, 0, 59);
+		if (num > 0) {
+			count++;
+			json += "{\"Section\":\"0-59\",\"Num\":" + num + "}";
+		}
+		for (int i = 6; i < 9; i++) {
+			num = testDao.getPieChart(CourseID, i*10, (i+1)*10-1);
+			if (num > 0) {
+				if (count > 0) json += ",";
+				count++;
+				json += "{\"Section\":\"" + i*10 + "-" + ((i+1)*10-1) + "\",\"Num\":" + num + "}";
+			}
+		}
+		num = testDao.getPieChart(CourseID, 90, 100);
+		if (num > 0) {
+			if (count > 0) json += ",";
+			count++;
+			json += "{\"Section\":\"90-100\",\"Num\":" + num + "}";
+		}
+		json += "]}";
+		json = "{\"total\":"+count+",\"data\":[" + json;
 		return json;
 	}
 	

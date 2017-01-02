@@ -77,6 +77,30 @@ public class TestDao extends HibernateDaoSupport {
 		return count;
 	}
 	
+	public List<User> getUnUserList(String CourseID, int start, int limit) {
+		String hql = "FROM User u WHERE EXISTS ( FROM Usercourse WHERE completed=0 AND username = u.username AND courseID='"+CourseID+"')";
+		TypedQuery<User> query = getSessionFactory().getCurrentSession().createQuery(hql);
+		query.setFirstResult(start);
+		query.setMaxResults(limit);
+		List<User> users = query.getResultList();
+		return users;
+	}
+	
+	public int getUnUserCount(String CourseID) {
+		String sql = "SELECT COUNT(*) FROM ( SELECT * FROM User u WHERE EXISTS ( SELECT * FROM Usercourse WHERE completed=0 AND username = u.username AND courseID='"+CourseID+"') ) t";
+		TypedQuery<BigInteger> query = getSessionFactory().getCurrentSession().createNativeQuery(sql);
+		int count = query.getSingleResult().intValue();
+		return count;
+	}
+	
+	public int getPieChart(String CourseID, int lo, int hi) {
+		String sql = "SELECT count(*) FROM (SELECT * FROM Testrecord t WHERE courseID='"+CourseID+"' AND score=("
+				+ "SELECT max(score) FROM Testrecord WHERE username=t.username AND courseID='"+CourseID+"') GROUP BY username) a WHERE a.score>="+lo+" AND a.score<="+hi;
+		TypedQuery<BigInteger> query = getSessionFactory().getCurrentSession().createNativeQuery(sql);
+		int count = query.getSingleResult().intValue();
+		return count;
+	}
+	
 	public Course getCourse(String CourseID) {
 		String hql = "FROM Course WHERE CourseID='"+CourseID+"'";
 		Course course = (Course) getHibernateTemplate().find(hql).get(0);
@@ -122,6 +146,12 @@ public class TestDao extends HibernateDaoSupport {
 		TypedQuery<Long> query = getSessionFactory().getCurrentSession().createQuery(hql);
 		int count = query.getSingleResult().intValue();
 		return count;
+	}
+	
+	public void updateUserCourse(String username, String courseID) {
+		String hql = "UPDATE Usercourse set completed=1 WHERE username='"+username+"' AND courseID='"+courseID+"'";
+		TypedQuery query = getSessionFactory().getCurrentSession().createQuery(hql);
+		query.executeUpdate();
 	}
 	
 	public void saveTestrecord(Testrecord t) {

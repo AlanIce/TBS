@@ -84,6 +84,22 @@ public class TestAction extends ActionSupport implements ServletRequestAware, Se
 		return SUCCESS;
 	}
 	
+	public String getUnUserList() throws Exception {
+		String courseID = request.getParameter("courseID");
+		int start = Integer.parseInt(request.getParameter("start"));
+		int limit = Integer.parseInt(request.getParameter("limit"));
+		String json = testService.getUnUserList(courseID, start, limit);
+		outputJson(json);
+		return SUCCESS;
+	}
+	
+	public String getPieChart() throws Exception {
+		String courseID = request.getParameter("courseID");
+		String json = testService.getPieChart(courseID);
+		outputJson(json);
+		return SUCCESS;
+	}
+	
 	public String getTestBaseList() throws Exception {
 		String courseID = request.getParameter("courseID");
 		String findStr = request.getParameter("findStr");
