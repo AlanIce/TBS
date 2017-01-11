@@ -1,5 +1,5 @@
 package TBS.Model;
-// Generated Dec 16, 2016 9:37:02 PM by Hibernate Tools 5.1.0.Beta1
+// Generated Jan 3, 2017 7:23:27 PM by Hibernate Tools 5.1.0.Beta1
 
 import java.util.Date;
 
@@ -13,6 +13,8 @@ public class Testrecord implements java.io.Serializable {
 	private String courseId;
 	private Integer score;
 	private Date testDate;
+	private String answerList;
+	private String questionIdlist;
 
 	public Testrecord() {
 	}
@@ -22,11 +24,14 @@ public class Testrecord implements java.io.Serializable {
 		this.courseId = courseId;
 	}
 
-	public Testrecord(String username, String courseId, Integer score, Date testDate) {
+	public Testrecord(String username, String courseId, Integer score, Date testDate, String answerList,
+			String questionIdlist) {
 		this.username = username;
 		this.courseId = courseId;
 		this.score = score;
 		this.testDate = testDate;
+		this.answerList = answerList;
+		this.questionIdlist = questionIdlist;
 	}
 
 	public Integer getId() {
@@ -67,6 +72,22 @@ public class Testrecord implements java.io.Serializable {
 
 	public void setTestDate(Date testDate) {
 		this.testDate = testDate;
+	}
+
+	public String getAnswerList() {
+		return this.answerList;
+	}
+
+	public void setAnswerList(String answerList) {
+		this.answerList = answerList;
+	}
+
+	public String getQuestionIdlist() {
+		return this.questionIdlist;
+	}
+
+	public void setQuestionIdlist(String questionIdlist) {
+		this.questionIdlist = questionIdlist;
 	}
 
 }

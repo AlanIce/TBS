@@ -25,8 +25,15 @@ public class TestDao extends HibernateDaoSupport {
 		return questions;
 	}
 	
+	public Testrecord getTestrecord(int ID) {
+		String hql = "FROM Testrecord WHERE Id="+ID;
+		TypedQuery<Testrecord> query = getSessionFactory().getCurrentSession().createQuery(hql);
+		Testrecord testrecord = query.getSingleResult();
+		return testrecord;
+	}
+	
 	public List<Testrecord> getTestrecordList(String Username, int start, int limit) {
-		String hql = "FROM Testrecord WHERE username='"+Username+"'";
+		String hql = "FROM Testrecord WHERE username='"+Username+"' ORDER BY ID DESC";
 		TypedQuery<Testrecord> query = getSessionFactory().getCurrentSession().createQuery(hql);
 		query.setFirstResult(start);
 		query.setMaxResults(limit);
@@ -52,8 +59,8 @@ public class TestDao extends HibernateDaoSupport {
 	}
 	
 	public int getFinalTestrecordCount(String Username) {
-		String hql = "SELECT count(*) FROM (SELECT * FROM Testrecord a WHERE username='"+Username+"' AND score=(";
-		hql += "SELECT MAX(score) FROM Testrecord WHERE username=a.username AND courseId=a.courseId) GROUP BY courseId) t";
+		String hql = "SELECT count(*) FROM (SELECT * FROM testrecord a WHERE username='"+Username+"' AND score=(";
+		hql += "SELECT MAX(score) FROM testrecord WHERE username=a.username AND courseId=a.courseId) GROUP BY courseId) t";
 		TypedQuery<BigInteger> query = getSessionFactory().getCurrentSession().createNativeQuery(hql);
 		int count = query.getSingleResult().intValue();
 		return count;
@@ -70,8 +77,8 @@ public class TestDao extends HibernateDaoSupport {
 	}
 	
 	public int getScoresCount(String CourseID) {
-		String sql = "SELECT count(*) FROM (SELECT * FROM Testrecord t WHERE courseID='"+CourseID+"' AND score=("
-				+ "SELECT max(score) FROM Testrecord WHERE username=t.username AND courseID='"+CourseID+"') GROUP BY username) a";
+		String sql = "SELECT count(*) FROM (SELECT * FROM testrecord t WHERE courseID='"+CourseID+"' AND score=("
+				+ "SELECT max(score) FROM testrecord WHERE username=t.username AND courseID='"+CourseID+"') GROUP BY username) a";
 		TypedQuery<BigInteger> query = getSessionFactory().getCurrentSession().createNativeQuery(sql);
 		int count = query.getSingleResult().intValue();
 		return count;
@@ -87,15 +94,15 @@ public class TestDao extends HibernateDaoSupport {
 	}
 	
 	public int getUnUserCount(String CourseID) {
-		String sql = "SELECT COUNT(*) FROM ( SELECT * FROM User u WHERE EXISTS ( SELECT * FROM Usercourse WHERE completed=0 AND username = u.username AND courseID='"+CourseID+"') ) t";
+		String sql = "SELECT COUNT(*) FROM ( SELECT * FROM user u WHERE EXISTS ( SELECT * FROM usercourse WHERE completed=0 AND username = u.username AND courseID='"+CourseID+"') ) t";
 		TypedQuery<BigInteger> query = getSessionFactory().getCurrentSession().createNativeQuery(sql);
 		int count = query.getSingleResult().intValue();
 		return count;
 	}
 	
 	public int getPieChart(String CourseID, int lo, int hi) {
-		String sql = "SELECT count(*) FROM (SELECT * FROM Testrecord t WHERE courseID='"+CourseID+"' AND score=("
-				+ "SELECT max(score) FROM Testrecord WHERE username=t.username AND courseID='"+CourseID+"') GROUP BY username) a WHERE a.score>="+lo+" AND a.score<="+hi;
+		String sql = "SELECT count(*) FROM (SELECT * FROM testrecord t WHERE courseID='"+CourseID+"' AND score=("
+				+ "SELECT max(score) FROM testrecord WHERE username=t.username AND courseID='"+CourseID+"') GROUP BY username) a WHERE a.score>="+lo+" AND a.score<="+hi;
 		TypedQuery<BigInteger> query = getSessionFactory().getCurrentSession().createNativeQuery(sql);
 		int count = query.getSingleResult().intValue();
 		return count;

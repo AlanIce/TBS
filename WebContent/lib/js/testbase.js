@@ -3,7 +3,8 @@ Ext.onReady(function() {
 	var selRecs = [];		// 选中的记录
 	var IDList = [];		// 选中的记录的ID
 	var courseID;			// 课程ID
-	var forms;
+	var testbaseForm;
+	var paperForm;
 	var pageSize = 25;
 	var dataStore = Ext.create('Ext.data.Store', {
 		fields: [
@@ -101,11 +102,11 @@ Ext.onReady(function() {
 		text: '添加',
 		icon: "lib/image/toolbar/add.gif",
 		handler: function() {
-			createForm({
+			createTestBaseForm({
 				action: 'addProject',
 				url: "TestAction_addTestBase"
 			});
-			showWin( { winId: 'addProject', title: '新增题库', items: [forms] } );
+			showWin( { winId: 'addProject', title: '新增题库', items: [testbaseForm] } );
 		}
 	});
 	var btnEdit = Ext.create('Ext.Button', {
@@ -115,11 +116,11 @@ Ext.onReady(function() {
 		disabled:true,
 		icon: "lib/image/toolbar/edit.png",
 		handler: function() {
-			createForm({
+			createTestBaseForm({
 				action: 'editProject',
 				url: "TestAction_editTestBase"
 			});
-			showWin( { winId: 'editProject', title: '修改题库', items: [forms] } );
+			showWin( { winId: 'editProject', title: '修改题库', items: [testbaseForm] } );
 		}
 	});
 	var btnDel = Ext.create('Ext.Button', {
@@ -134,6 +135,21 @@ Ext.onReady(function() {
 				if (buttonID == 'yes')
 					$.getJSON(encodeURI('TestAction_deleteTestBase'), { IDList: IDList.toString()}, function (res) { bbar.moveFirst(); });
 			});
+		}
+	});
+	var btnPaper = Ext.create('Ext.Button', {
+		width: 90,
+		height: 32,
+		text: '试卷管理',
+		icon: "lib/image/toolbar/paper.png",
+		handler: function() {
+			createPaperForm();
+			paperForm.getForm().load({
+				url: 'SelectAction_getPaper',
+				params: { courseID: courseID },
+				failure: function() { alert('加载远程记录失败，请检查数据结构'); }
+			});
+			showWin( { title: '管理试卷', items: [paperForm] } );
 		}
 	});
 	
@@ -161,7 +177,9 @@ Ext.onReady(function() {
 	var tbar = new Ext.Toolbar({
 		defaults: { scale: 'medium' }
 	});
-	
+
+	tbar.add(comboBox);
+	tbar.add('-');
 	tbar.add(textSearch);
 	tbar.add(btnSearch);
 	tbar.add('-');
@@ -169,7 +187,7 @@ Ext.onReady(function() {
 	tbar.add(btnEdit);
 	tbar.add(btnDel);
 	tbar.add('-');
-	tbar.add(comboBox);
+	tbar.add(btnPaper);
 	
 	var bbar = Ext.create('Ext.PagingToolbar',{
 		pageSize: pageSize,
@@ -179,8 +197,8 @@ Ext.onReady(function() {
 		store: dataStore
 	});
 	
-	var createForm = function(config) {
-		forms = Ext.create('Ext.form.Panel', {
+	var createTestBaseForm = function(config) {
+		testbaseForm = Ext.create('Ext.form.Panel', {
 			renderTo: Ext.getBody(),
 			bodyPadding: 5,
 			buttonAlign: 'center',
@@ -251,8 +269,8 @@ Ext.onReady(function() {
 			},{
 				text: '确定',
 				handler: function() {
-					if(forms.form.isValid()){
-						forms.form.submit({
+					if(testbaseForm.form.isValid()){
+						testbaseForm.form.submit({
 							clientValidation: true,
 							url: encodeURI(config.url),
 							method : 'post',
@@ -267,12 +285,102 @@ Ext.onReady(function() {
 			},{
 				text: '重置',
 				handler: function(){
-					forms.form.reset();
-					if (config.action == "editProject")	forms.getForm().loadRecord(selRecs[0]);  //加载选中记录数据
+					testbaseForm.form.reset();
+					if (config.action == "editProject")	testbaseForm.getForm().loadRecord(selRecs[0]);  //加载选中记录数据
 				}
 			}]
 		});// forms定义结束
-		if (config.action == 'editProject') forms.getForm().loadRecord(selRecs[0]);  //加载选中记录数据
+		if (config.action == 'editProject') testbaseForm.getForm().loadRecord(selRecs[0]);  //加载选中记录数据
+	};
+	
+	var createPaperForm = function(config) {
+		paperForm = Ext.create('Ext.form.Panel', {
+			renderTo: Ext.getBody(),
+			bodyPadding: 5,
+			buttonAlign: 'center',
+			autoScroll: true,
+			frame: false,
+			items: [{
+				xtype:'radiogroup',
+				fieldLabel: '出卷方式',
+				labelAlign: 'right',
+				labelWidth: 100,
+				anchor:'60%',
+				items:[
+						{boxLabel: '随机', name: 'Auto', inputValue: 'true' },
+						{boxLabel: '自选', name: 'Auto', inputValue: 'false'}
+				],
+				listeners: {
+					'change': function(obj) {
+						var type = obj.lastValue['Auto'];
+						if(type == 'true') paperForm.getComponent('QuestionIDList').hide();
+						else if(type == 'false') paperForm.getComponent('QuestionIDList').show();
+					}
+				}
+			},{
+				xtype:'combobox',
+				fieldLabel: '题目数量',
+				name: 'QuestionNum',
+				labelAlign: 'right',
+				labelWidth: 100,
+				anchor:'60%',
+				editable : false,
+				selectOnFocus:true,
+				autoSelect: true,
+				store: Ext.create("Ext.data.Store", {
+				    fields: ["Num"],
+				    data: [
+				        { Num: 5 },
+				        { Num: 10 },
+				        { Num: 20 },
+				        { Num: 25 },
+				        { Num: 50 },
+				        { Num: 100 },
+				    ]
+				}),
+	            displayField: "Num"
+			},{
+				xtype: 'textarea',
+				fieldLabel: '题目列表',
+				name: 'QuestionIDList',
+				itemId: 'QuestionIDList',
+				labelAlign: 'right',
+				labelWidth: 100,
+				anchor:'100%'
+			},{
+				xtype: 'container',
+				flex: 1,
+				layout: 'anchor',
+				items: []
+			}],
+			buttons: [{
+				text: '取消',
+				handler: function(){ this.up('window').close();	}
+			},{
+				text: '确定',
+				handler: function() {
+					var type = paperForm.getForm().findField('Auto').getGroupValue();
+					var QuestionNum = paperForm.getForm().findField('QuestionNum').getValue();
+					var QuestionIDList = paperForm.getForm().findField('QuestionIDList').getValue();
+					if (type == 'false' && (!/^[\d|,]+$/.test(QuestionIDList) || QuestionIDList.split(',').length != QuestionNum)) {
+						Ext.Msg.alert('警告','请检查题目列表是否正确！');
+						return;
+					}
+					if(paperForm.form.isValid()){
+						paperForm.form.submit({
+							clientValidation: true,
+							url: encodeURI('SelectAction_editPaper'),
+							method : 'post',
+							params : {courseID: courseID}
+						})
+						this.up('window').close();
+					} else Ext.Msg.alert('警告','请完善信息！'); 
+				}
+			},{
+				text: '预览试卷',
+				handler: function(){ window.open('/TBS/test?type=preview&courseID=' + courseID); }
+			}]
+		});
 	};
 	
 	var showWin = function(config) {
@@ -302,12 +410,13 @@ Ext.onReady(function() {
 		height: 600,
 		pageSize: pageSize,
 		columns: [
-			{ text: '序号', xtype: 'rownumberer',width: 40, sortable: false},
-			{ text: '问题', dataIndex: 'Question', align: 'center', width: 180},
-			{ text: '选项A', dataIndex: 'OptionA', align: 'center', width: 120},
-			{ text: '选项B', dataIndex: 'OptionB', align: 'center', width: 120},
-			{ text: '选项C', dataIndex: 'OptionC', align: 'center', width: 120},
-			{ text: '选项D', dataIndex: 'OptionD', align: 'center', width: 120},
+//			{ text: '序号', xtype: 'rownumberer', width: 40, sortable: false},
+			{ text: '序号', dataIndex: 'ID', width: 40, sortable: false},
+			{ text: '问题', dataIndex: 'Question', align: 'center', width: 225},
+			{ text: '选项A', dataIndex: 'OptionA', align: 'center', width: 160},
+			{ text: '选项B', dataIndex: 'OptionB', align: 'center', width: 160},
+			{ text: '选项C', dataIndex: 'OptionC', align: 'center', width: 160},
+			{ text: '选项D', dataIndex: 'OptionD', align: 'center', width: 160},
 			{ text: '答案', dataIndex: 'Answer', align: 'center', width: 80},
 		],
 		bbar: bbar,

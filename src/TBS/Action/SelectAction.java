@@ -60,6 +60,24 @@ public class SelectAction extends ActionSupport implements ServletRequestAware, 
 		outputJson(json);
 		return EMPTY;
 	}
+	
+	public String getPaper() throws Exception {
+		String courseID = request.getParameter("courseID");
+		String json = selectService.getPaper(courseID);
+		outputJson(json);
+		return EMPTY;
+	}
+	
+	public String editPaper() throws Exception {
+		String courseID = request.getParameter("courseID");
+		Boolean auto = request.getParameter("Auto").equals("true");
+		int questionNum = Integer.parseInt(request.getParameter("QuestionNum"));
+		String questionIDList = request.getParameter("QuestionIDList");
+		String json = selectService.editPaper(courseID, auto, questionNum, questionIDList);
+		outputJson(json);
+		return EMPTY;
+	}
+	
 	@Override
 	public void setServletRequest(HttpServletRequest arg0) {
 		this.request = arg0;

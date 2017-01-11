@@ -15,29 +15,113 @@ import org.hibernate.query.criteria.internal.expression.function.AggregationFunc
 
 public class TestService {
 	
-	private TestDao testDao;	
-	private final int QuestionNum = 10;		//卷子题目数量
-	private final int SingleScore = 10;		//一题的分数
+	private TestDao testDao;
 
-	public String getQuestionList(String CourseID) {
-		List<Question> questions = testDao.getQuestionList(CourseID, QuestionNum);
-		int total = questions.size();
+	public String getQuestionList_Test(String CourseID) {
+		Course course = testDao.getCourse(CourseID);
+		int QuestionNum = course.getQuestionNum();getClass();
+		String questionIDList = course.getQuestionIdlist();
+		int total = QuestionNum;
+		String json = "{\"Project\":\""+course.getCourseName()+"\",\"total\":"+total+",\"data\":[";
+		if (course.isAuto()) {
+			List<Question> questions = testDao.getQuestionList(CourseID, QuestionNum);
+			questionIDList = "";
+			for (int i = 0; i < total; i++) {
+				Question question = questions.get(i);
+				if (i > 0) {
+					questionIDList += ",";
+					json += ",";
+				}
+				json += "{\"Question\":\"" + question.getQuestion().replace("\"", "\\\"") + "\""
+					+ ",\"ImgSrc\":\"" + question.getImgSrc() + "\""
+					+ ",\"OptionA\":\"" + question.getOptionA().replace("\"", "\\\"") + "\""
+					+ ",\"OptionB\":\"" + question.getOptionB().replace("\"", "\\\"") + "\""
+					+ ",\"OptionC\":\"" + question.getOptionC().replace("\"", "\\\"") + "\""
+					+ ",\"OptionD\":\"" + question.getOptionD().replace("\"", "\\\"") + "\"" + "}";
+				questionIDList += question.getId();
+			}
+		} else {
+			String[] questionIDArray = questionIDList.split(",");
+			for (int i = 0; i < total; i++) {
+				if (i > 0) json += ",";
+				Question question = testDao.getQuestion(Integer.parseInt(questionIDArray[i]));
+				json += "{\"Question\":\"" + question.getQuestion().replace("\"", "\\\"") + "\""
+						+ ",\"ImgSrc\":\"" + question.getImgSrc() + "\""
+						+ ",\"OptionA\":\"" + question.getOptionA().replace("\"", "\\\"") + "\""
+						+ ",\"OptionB\":\"" + question.getOptionB().replace("\"", "\\\"") + "\""
+						+ ",\"OptionC\":\"" + question.getOptionC().replace("\"", "\\\"") + "\""
+						+ ",\"OptionD\":\"" + question.getOptionD().replace("\"", "\\\"") + "\"" + "}";
+			}
+		}
+		json += "],\"questionIDList\":\""+questionIDList+"\"}";
+		System.out.println(json);
+		return json;
+	}
+	
+	public String getQuestionList_Review(int TestrecordID) {
+		Testrecord testrecord = testDao.getTestrecord(TestrecordID);
+		String QuestionIDList = testrecord.getQuestionIdlist();
+		String AnswerList = testrecord.getAnswerList();
+		String[] QuestionIDArray = QuestionIDList.split(",");
+		String[] AnswerArray = AnswerList.split(",");
+		int total = QuestionIDArray.length;
+		String CourseID = testrecord.getCourseId();
 		Course course = testDao.getCourse(CourseID);
 		String json = "{\"Project\":\""+course.getCourseName()+"\",\"total\":"+total+",\"data\":[";
 		String questionIDList = "";
 		for (int i = 0; i < total; i++) {
-			Question question = questions.get(i);
-			if (i > 0) {
-				questionIDList += ",";
-				json += ",";
-			}
+			Question question = testDao.getQuestion(Integer.parseInt(QuestionIDArray[i]));
+			if (i > 0) json += ",";
 			json += "{\"Question\":\"" + question.getQuestion().replace("\"", "\\\"") + "\""
 				+ ",\"ImgSrc\":\"" + question.getImgSrc() + "\""
 				+ ",\"OptionA\":\"" + question.getOptionA().replace("\"", "\\\"") + "\""
 				+ ",\"OptionB\":\"" + question.getOptionB().replace("\"", "\\\"") + "\""
 				+ ",\"OptionC\":\"" + question.getOptionC().replace("\"", "\\\"") + "\""
-				+ ",\"OptionD\":\"" + question.getOptionD().replace("\"", "\\\"") + "\"" + "}";
+				+ ",\"OptionD\":\"" + question.getOptionD().replace("\"", "\\\"") + "\"" 
+				+ ",\"MyAnswer\":\"" + AnswerArray[i] + "\"" 
+				+ ",\"StdAnswer\":\"" + question.getAnswer() + "\"" + "}";
 			questionIDList += question.getId();
+		}
+		json += "]}";
+		System.out.println(json);
+		return json;
+	}
+	
+	public String getQuestionList_Preview(String CourseID) {
+		Course course = testDao.getCourse(CourseID);
+		int QuestionNum = course.getQuestionNum();getClass();
+		String questionIDList = course.getQuestionIdlist();
+		int total = QuestionNum;
+		String json = "{\"Project\":\""+course.getCourseName()+"\",\"total\":"+total+",\"data\":[";
+		if (course.isAuto()) {
+			List<Question> questions = testDao.getQuestionList(CourseID, QuestionNum);
+			questionIDList = "";
+			for (int i = 0; i < total; i++) {
+				Question question = questions.get(i);
+				if (i > 0) {
+					questionIDList += ",";
+					json += ",";
+				}
+				json += "{\"Question\":\"" + question.getQuestion().replace("\"", "\\\"") + "\""
+					+ ",\"ImgSrc\":\"" + question.getImgSrc() + "\""
+					+ ",\"OptionA\":\"" + question.getOptionA().replace("\"", "\\\"") + "\""
+					+ ",\"OptionB\":\"" + question.getOptionB().replace("\"", "\\\"") + "\""
+					+ ",\"OptionC\":\"" + question.getOptionC().replace("\"", "\\\"") + "\""
+					+ ",\"OptionD\":\"" + question.getOptionD().replace("\"", "\\\"") + "\"" + "}";
+				questionIDList += question.getId();
+			}
+		} else {
+			String[] questionIDArray = questionIDList.split(",");
+			for (int i = 0; i < total; i++) {
+				if (i > 0) json += ",";
+				Question question = testDao.getQuestion(Integer.parseInt(questionIDArray[i]));
+				json += "{\"Question\":\"" + question.getQuestion().replace("\"", "\\\"") + "\""
+						+ ",\"ImgSrc\":\"" + question.getImgSrc() + "\""
+						+ ",\"OptionA\":\"" + question.getOptionA().replace("\"", "\\\"") + "\""
+						+ ",\"OptionB\":\"" + question.getOptionB().replace("\"", "\\\"") + "\""
+						+ ",\"OptionC\":\"" + question.getOptionC().replace("\"", "\\\"") + "\""
+						+ ",\"OptionD\":\"" + question.getOptionD().replace("\"", "\\\"") + "\"" + "}";
+			}
 		}
 		json += "],\"questionIDList\":\""+questionIDList+"\"}";
 		System.out.println(json);
@@ -57,7 +141,9 @@ public class TestService {
 			String TestDate = sdf.format(testrecord.getTestDate());
 			String courseID = testrecord.getCourseId();
 			Course course = testDao.getCourse(courseID);
-			json += "{\"CourseName\":\"" + course.getCourseName() + "\""
+			json += "{\"TestrecordID\":" + testrecord.getId() + ""
+				+ ",\"CourseID\":\"" + course.getCourseId() + "\""
+				+ ",\"CourseName\":\"" + course.getCourseName() + "\""
 				+ ",\"TestDate\":\"" + TestDate + "\""
 				+ ",\"Score\":" + testrecord.getScore() + "}";
 		}
@@ -78,7 +164,9 @@ public class TestService {
 			String TestDate = sdf.format(testrecord.getTestDate());
 			String courseID = testrecord.getCourseId();
 			Course course = testDao.getCourse(courseID);
-			json += "{\"CourseName\":\"" + course.getCourseName() + "\""
+			json += "{\"TestrecordID\":" + testrecord.getId() + ""
+				+ ",\"CourseID\":\"" + course.getCourseId() + "\""
+				+ ",\"CourseName\":\"" + course.getCourseName() + "\""
 				+ ",\"TestDate\":\"" + TestDate + "\""
 				+ ",\"Score\":" + testrecord.getScore() + "}";
 		}
@@ -96,6 +184,8 @@ public class TestService {
 		}
 		int score = 0;
 		int length = questionIDArray.length;
+		int QuestionNum = testDao.getCourse(courseID).getQuestionNum();
+		int SingleScore = 100 / QuestionNum;
 		for (int i = 0; i < length; i++) {
 			int ID = Integer.parseInt(questionIDArray[i]);
 			Question question = testDao.getQuestion(ID);
@@ -111,6 +201,8 @@ public class TestService {
 		testrecord.setCourseId(courseID);
 		testrecord.setTestDate(t);
 		testrecord.setScore(score);
+		testrecord.setAnswerList(answerList);
+		testrecord.setQuestionIdlist(questionIDList);
 		testDao.saveTestrecord(testrecord);
 		testDao.updateUserCourse(username, courseID);
 		json = "{\"result\":\"success\",\"score\":\"" + score + "\"}";

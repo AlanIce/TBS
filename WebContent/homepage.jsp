@@ -13,7 +13,7 @@
 </head>
 
 <body>
-	<div class="uk-navbar x-container">             
+	<div class="uk-navbar x-container">
         <a href="/TBS" class="uk-navbar-brand uk-visible-large">题库管理系统</a>
         <a href="/TBS" class="uk-navbar-brand uk-hidden-large"><i class="uk-icon-home"></i></a>
         <ul id="ul-navbar" class="uk-navbar-nav uk-hidden-small">                    
@@ -52,8 +52,7 @@
                         <br><br>
                     </div>
                     
-                    	
-                    <div class="uk-vertical-align-middle uk-width-1-2">
+					<div class="uk-vertical-align-middle uk-width-1-2">
                         <p class="uk-text-large" align="left" style="font-size: 30px;">新注册用户指南：</p>
                         <p class="uk-text-large" align="left">STEP1：进入个人中心页面选择相应课程，加入自己的课表</p>
                         <p class="uk-text-large" align="left">STEP2：进入课程选择页面选择相应课程，点击图像进入考试</p>

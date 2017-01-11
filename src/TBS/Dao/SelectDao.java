@@ -19,6 +19,10 @@ public class SelectDao extends HibernateDaoSupport {
 		return courses.get(0);
 	}
 	
+	public void updateCourse(Course course) {
+		getHibernateTemplate().update(course);
+	}
+	
 	public List<Course> getCourseList() {
 		String hql = "FROM Course WHERE courseID!=null";
 		List<Course> courses = (List<Course>) getHibernateTemplate().find(hql);

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Nov 5, 2016 4:33:28 PM by Hibernate Tools 5.1.0.Beta1 -->
+<!-- Generated Jan 3, 2017 11:41:10 PM by Hibernate Tools 5.1.0.Beta1 -->
 <hibernate-mapping>
     <class name="TBS.Model.Course" table="course" catalog="tbs" optimistic-lock="version">
         <id name="courseId" type="string">
@@ -16,6 +16,15 @@
         </property>
         <property name="teacher" type="string">
             <column name="Teacher" length="20" />
+        </property>
+        <property name="auto" type="boolean">
+            <column name="Auto" not-null="true" />
+        </property>
+        <property name="questionNum" type="int">
+            <column name="QuestionNum" not-null="true" />
+        </property>
+        <property name="questionIdlist" type="string">
+            <column name="QuestionIDList" />
         </property>
     </class>
 </hibernate-mapping>

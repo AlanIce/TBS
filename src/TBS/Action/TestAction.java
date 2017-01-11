@@ -41,8 +41,18 @@ public class TestAction extends ActionSupport implements ServletRequestAware, Se
 	}
 	
 	public String getQuestionList() throws Exception {
-		String CourseID = request.getParameter("CourseID");
-		String json = testService.getQuestionList(CourseID);
+		String json = "";
+		String type = request.getParameter("type");
+		if (type.equals("test")) {
+			String courseID = request.getParameter("courseID");
+			json = testService.getQuestionList_Test(courseID);
+		} else if (type.equals("review")) {
+			String testrecordID = request.getParameter("testrecordID");
+			json = testService.getQuestionList_Review(Integer.parseInt(testrecordID));
+		} else if (type.equals("preview")) {
+			String courseID = request.getParameter("courseID");
+			json = testService.getQuestionList_Preview(courseID);
+		}
 		outputJson(json);
 		return EMPTY;
 	}

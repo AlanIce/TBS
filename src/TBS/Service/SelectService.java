@@ -57,9 +57,29 @@ public class SelectService {
 		} else if (type.equals("del")) {
 			selectDao.deleteTestrecord(username, courseID);
 		}
+		return json;		
+	}
+	
+	public String getPaper(String courseID) {
+		Course course = selectDao.getCourse(courseID);
+		String json = "{\"success\": \"true\", \"data\":{\"Auto\":\""+ (course.isAuto() ? "true" : "false") + "\""
+				+ ",\"QuestionNum\":" + course.getQuestionNum()
+				+ ",\"QuestionIDList\":\"" + course.getQuestionIdlist() + "\"}}";
 		return json;
 		
 	}
+	
+	public String editPaper(String courseID, Boolean auto, int questionNum, String questionIDList) {
+		String json = "{\"result\":\"success\"}";
+		Course course = selectDao.getCourse(courseID);
+		course.setAuto(auto);
+		course.setQuestionNum(questionNum);
+		course.setQuestionIdlist(questionIDList);
+		selectDao.updateCourse(course);
+		return json;
+		
+	}	
+	
 	public SelectDao getSelectDao() {
 		return selectDao;
 	}

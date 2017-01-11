@@ -31,19 +31,28 @@
 </style>
 <script type="text/javascript">
 $(function() {
+	type = "<%=request.getParameter("type") %>";
+	courseID = "<%=request.getParameter("courseID") %>";
+	testrecordID = "<%=request.getParameter("testrecordID") %>";
 	$.ajax({
 		type: "POST",
 		url: "TestAction_getQuestionList",
 		data: {
-			CourseID: "<%=request.getParameter("courseID") %>"
+			type: type,
+			courseID: courseID,
+			testrecordID: testrecordID
 		},
 		dataType: "json",
 		success: function(data){
+			if ("<%=request.getParameter("type") %>" != "test")
+				$('#submitButton').remove();
 			$('#Project').html(data.Project);
 			total = data.total;
 			for (var i = 1; i <= total; i++) {
 				appendQuestion(i, data.data[i - 1].Question, data.data[i - 1].ImgSrc, data.data[i - 1].OptionA, 
 						data.data[i - 1].OptionB, data.data[i - 1].OptionC, data.data[i - 1].OptionD);
+				if (type == 'review')
+					appendAnswer(i, data.data[i - 1].MyAnswer, data.data[i - 1].StdAnswer);
 			}
 			questionIDList = data.questionIDList;
 		}
@@ -77,6 +86,16 @@ appendQuestion = function(index, question, imgSrc, optionA, optionB, optionC, op
 		 + '</ul>'
 		 + '</li>';
 	$('.paper-grid .question-level>ul').append(html);
+}
+
+appendAnswer = function(index, myAnswer, stdAnswer) {
+	html = '<h3>我的答案：  '+ myAnswer + '</h3><h3>参考答案：  ' + stdAnswer + '</h3>';
+	$('.paper-grid .question-level>ul>li').eq(index - 1).append(html);
+	if (myAnswer != stdAnswer) {
+		$('.paper-grid .question-level>ul>li>h2').eq(index - 1).css('color', 'red');
+		$('.paper-grid .question-level>ul>li').eq(index - 1).css('color', 'red');
+		$('.paper-grid .question-level>ul>li>h3').eq(2 * (index - 1)).css('color', 'red');
+	}
 }
 
 submitPaper = function() {
@@ -157,7 +176,7 @@ submitPaper = function() {
 							
 						</ul>
 					</div>
-					<button class="uk-button uk-button-primary uk-button-large button-center" onclick="submitPaper()">提交</button>
+					<button id="submitButton" class="uk-button uk-button-primary uk-button-large button-center" onclick="submitPaper()">提交</button>
 				</div>        		
 			</div>
 			

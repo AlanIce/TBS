@@ -59,7 +59,7 @@ function appendCourse(obj, courseID, courseName, courseImgSrc) {
 		 + '<figure class="uk-overlay">'
 		 + '<img width="400" height="400" src="'+courseImgSrc+'" alt="">'
 		 + '<figcaption class="uk-overlay-panel uk-overlay-background uk-flex uk-flex-center uk-flex-middle uk-text-center uk-overlay-fade">'
-		 + '<input type="button" class="inline-button uk-text-large uk-margin-top-remove" value="考试" onclick="window.location.href=\'/TBS/test?courseID='+courseID+'\'">'
+		 + '<input type="button" class="inline-button uk-text-large uk-margin-top-remove" value="考试" onclick="window.location.href=\'/TBS/test?type=test&courseID='+courseID+'\'">'
 		 + '</figcaption>'
 		 + '</figure>'
 		 + '</div>'

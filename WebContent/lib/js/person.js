@@ -17,6 +17,8 @@ Ext.onReady(function() {
 	// TestRecord Panel
 	var testrecordStore = Ext.create('Ext.data.Store', {
 		fields: [
+			{ name: 'TestrecordID'},
+			{ name: 'CourseID'},
 			{ name: 'CourseName'},
 			{ name: 'TestDate'},
 			{ name: 'Score'}
@@ -99,6 +101,11 @@ Ext.onReady(function() {
 			{ text: '科目', dataIndex: 'CourseName', align: 'center', width: 180},
 			{ text: '考试时间', dataIndex: 'TestDate', align: 'center', width: 160},
 			{ text: '得分', dataIndex: 'Score', align: 'center', width: 80},
+			{ text: '查看历史试卷', align: 'center', width: 125, renderer: function (value, meta, record) {
+				var testrecordID = record.get('TestrecordID');
+				return	'<a><img src="lib/image/toolbar/help.png" onclick="window.location.href=\'/TBS/test?type=review&testrecordID='+testrecordID+'\'"></a>';
+			}
+		},
 		],
 		tbar: testrecordTbar,
 		bbar: testrecordBbar

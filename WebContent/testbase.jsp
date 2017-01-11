@@ -63,7 +63,7 @@ if (role == "普通用户") {
 	<div class="uk-container uk-container-center uk-margin-large-top uk-margin-large-bottom">
         <div class="uk-grid">
         	<div class="main-grid uk-width-medium-1-1">
-                <div id="TestBaseTable" class="uk-container uk-container-center uk-width-medium-4-5"></div>   
+                <div id="TestBaseTable" class="uk-container uk-container-center"></div>   
         	</div>
                 
         </div>
